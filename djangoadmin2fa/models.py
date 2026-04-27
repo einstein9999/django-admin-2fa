@@ -2,9 +2,11 @@ import random
 import string
 
 import pyotp
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
+
+User = get_user_model()
 
 
 class TOTPDevice(models.Model):
@@ -22,7 +24,7 @@ class TOTPDevice(models.Model):
 
     def generate_qr_code_uri(self, issuer_name):
         """Generate the TOTP URI for QR code."""
-        return pyotp.totp.TOTP(self.secret_key).provisioning_uri(name=self.user.email, issuer_name=issuer_name)
+        return pyotp.totp.TOTP(self.secret_key).provisioning_uri(name=self.user.username, issuer_name=issuer_name)
 
     def verify_token(self, token):
         """Verify if the token provided is correct."""
